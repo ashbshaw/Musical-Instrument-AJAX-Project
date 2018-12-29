@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Musical Gifs</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Instrument Search</h1>
+
+        <!-- Rendered buttons will get dumped here  -->
+        <div id="buttons-view"></div>
+        <br>
+
+        <form id="instrument-form">
+            <label for="instrument-input">Add an Instrument!</label>
+            <input type="text" id="instrument-input"><br>
+
+            <!-- Button triggers new instruments to be added -->
+            <input id="add-instrument" type="submit" value="Submit">
+        </form>
+        <br>
+
+        <!-- Instrument gifs will go here -->
+        <div id="instruments-view"></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            // $("#select-instrument").on("click", function () {
+
+            var instruments = ["drums", "trumpet", "guitar", "saxophone", "flute", "trombone"];
+
+            function displayInstrument() {
+
+                var instrument = $(this).attr("data-name");
+
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + instruments + "&api_key=8VXLEp8Z7wNYMitTIA1I5P4sHXXdsIGd";
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function (response) {
+
+                    var results = response.data;
+
+
+                    var rating = response.Rated;
+
+                    for (var i = 0; i < results.length; i++) {
+
+                        // Gif variables and holders
+                        var gifDiv = $("<div>");
+                        var gifImage = $("<img>");
+                        gifImage.attr("src", results[i].images.fixed_height.url);
+                        gifDiv.prepend(gifImage);
+                        $("#instruments-view").prepend(gifDiv);
+
+
+                        // Rating variables and holders
+                        var tableRow = $("<tr>");
+                        var rating = results[i].rating;
+                        var showRating = $("<p>").text("rated: " + rating);
+
+                    }
+
+                });
+
+            }
+
+            // Function for displaying instrument buttons
+            function renderButtons() {
+
+                // Deletes the instruments prior to adding new
+                // (this is necessary otherwise you will have repeat buttons)
+                $("#buttons-view").empty();
+
+                // Loops through the array of instruments
+                for (var i = 0; i < instruments.length; i++) {
+
+                    // Then dynamicaly generates buttons for each instrument in the array
+                    var button = $("<button>");
+                    // Adds a class of "instrument" to button
+                    button.addClass("instrument");
+                    // Added a data-attribute
+                    button.attr("data-name", instruments[i]);
+                    // Provided the initial button text
+                    button.text(instruments[i]);
+                    // Added the button to the buttons-view div
+                    $("#buttons-view").append(button);
+                }
+            }
+
+            // This function handles events where the add movie button is clicked
+            $("#add-instrument").on("click", function (event) {
+                event.preventDefault();
+                // This line of code will grab the input from the textbox
+                var instrumentInput = $("#instrument-input").val().trim();
+
+                // The movie from the textbox is then added to our array
+                instruments.push(instrumentInput);
+
+                // Calling renderButtons which handles the processing of our movie array
+                renderButtons();
+            });
+
+            // Adding click event listeners to all elements with a class of "instrument"
+            $(document).on("click", ".instrument", displayInstrument);
+
+            // Calling the renderButtons function to display the intial buttons
+            renderButtons();
+
+
+        </script>
+    </div>
+
+</body>
+
+</html>
