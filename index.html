@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="giphycss.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Musical Gifs</title>
 </head>
 
@@ -18,7 +20,7 @@
         <br>
 
         <form id="instrument-form">
-            <label for="instrument-input">Add an Instrument!</label>
+            <label for="instrument-input"><h2>Add an Instrument!</h2></label>
             <input type="text" id="instrument-input"><br>
 
             <!-- Button triggers new instruments to be added -->
@@ -33,91 +35,95 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script type="text/javascript">
 
-            // add the document ready!!!
+            $(document).ready(function () {
 
-            var instruments = ["drums", "trumpet", "guitar", "saxophone", "flute", "trombone"];
+                var instruments = ["drums", "trumpet", "guitar", "saxophone", "flute", "trombone"];
 
-            function displayInstrument() {
+                function displayInstrument() {
 
-                var instrument = $(this).attr("data-name");
+                    var instrument = $(this).attr("data-name");
 
-                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + instrument + "&api_key=8VXLEp8Z7wNYMitTIA1I5P4sHXXdsIGd&limit=10";
+                    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + instrument + "&api_key=8VXLEp8Z7wNYMitTIA1I5P4sHXXdsIGd&limit=10";
 
-                //var state = $(this).attr("data-state");
+                    //var state = $(this).attr("data-state");
 
-                $.ajax({
-                    url: queryURL,
-                    method: "GET"
-                }).then(function (response) {
+                    $.ajax({
+                        url: queryURL,
+                        method: "GET"
+                    }).then(function (response) {
 
-                    var results = response.data;
+                        var results = response.data;
 
-                    for (var i = 0; i < results.length; i++) {
+                        for (var i = 0; i < results.length; i++) {
 
-                        // Gif variables and holders
-                        var gifDiv = $("<div>");
-                        var gifImage = $("<img>");
-                        gifImage.attr("src", results[i].images.fixed_height_still.url);
+                            // Gif variables and holders
+                            var gifDiv = $("<div>");
+                            var gifImage = $("<img>");
+                            var gifImage2 = $("<img>");
+                            gifImage.attr("src", results[i].images.fixed_height_still.url);
+                            gifImage2.attr("src", results[i].images.fixed_height.url);
 
-                        gifDiv.prepend(gifImage);
-                        $("#instruments-view").prepend(gifDiv);
+                            gifDiv.prepend(gifImage);
+                            $("#instruments-view").prepend(gifDiv);
 
-                        // Rating variables and holders
-                        var p = $("<p>");
-                        p.addClass("rating");
-                        p.text("Rating: " + results[i].rating);
+                            // Rating variables and holders
+                            var p = $("<p>");
+                            p.addClass("rating");
+                            p.text("Rating: " + results[i].rating);
 
-                        gifDiv.append(p);
+                            gifDiv.append(p);
 
-                     //   $("#instruments-view").on("click", function () {
-                     //       $(this).attr('src', src.replace('.gif', '_anim.gif'));
-                     //   })
-                    }
-                });
-            }
-
-            // Function for displaying instrument buttons
-            function renderButtons() {
-
-                // Deletes the instruments prior to adding new
-                // (this is necessary otherwise you will have repeat buttons)
-                $("#buttons-view").empty();
-
-                // Loops through the array of instruments
-                for (var i = 0; i < instruments.length; i++) {
-
-                    // Then dynamicaly generates buttons for each instrument in the array
-                    var button = $("<button>");
-                    // Adds a class of "instrument" to button
-                    button.addClass("instrument");
-                    // Added a data-attribute
-                    button.attr("data-name", instruments[i]);
-                    // Provided the initial button text
-                    button.text(instruments[i]);
-                    // Added the button to the buttons-view div
-                    $("#buttons-view").append(button);
+                            $("#instruments-view").on("click", function () {
+                                // On the right track but not working
+                                //gifDiv.remove(gifImage);
+                                gifDiv.prepend(gifImage2);
+                            })
+                        }
+                    });
                 }
-            }
 
-            // This function handles events where the add instrument button is clicked
-            $("#add-instrument").on("click", function (event) {
-                event.preventDefault();
-                // This line of code will grab the input from the textbox
-                var instrumentInput = $("#instrument-input").val().trim();
+                // Function for displaying instrument buttons
+                function renderButtons() {
 
-                // The movie from the textbox is then added to our array
-                instruments.push(instrumentInput);
+                    // Deletes the instruments prior to adding new
+                    // (this is necessary otherwise you will have repeat buttons)
+                    $("#buttons-view").empty();
 
-                // Calling renderButtons which handles the processing of our movie array
+                    // Loops through the array of instruments
+                    for (var i = 0; i < instruments.length; i++) {
+
+                        // Then dynamicaly generates buttons for each instrument in the array
+                        var button = $("<button>");
+                        // Adds a class of "instrument" to button
+                        button.addClass("instrument");
+                        // Added a data-attribute
+                        button.attr("data-name", instruments[i]);
+                        // Provided the initial button text
+                        button.text(instruments[i]);
+                        // Added the button to the buttons-view div
+                        $("#buttons-view").append(button);
+                    }
+                }
+
+                // This function handles events where the add instrument button is clicked
+                $("#add-instrument").on("click", function (event) {
+                    event.preventDefault();
+                    // This line of code will grab the input from the textbox
+                    var instrumentInput = $("#instrument-input").val().trim();
+
+                    // The movie from the textbox is then added to our array
+                    instruments.push(instrumentInput);
+
+                    // Calling renderButtons which handles the processing of our movie array
+                    renderButtons();
+                });
+
+                // Adding click event listeners to all elements with a class of "instrument"
+                $(document).on("click", ".instrument", displayInstrument);
+
+                // Calling the renderButtons function to display the intial buttons
                 renderButtons();
-            });
-
-            // Adding click event listeners to all elements with a class of "instrument"
-            $(document).on("click", ".instrument", displayInstrument);
-
-            // Calling the renderButtons function to display the intial buttons
-            renderButtons();
-
+            })
 
         </script>
     </div>
