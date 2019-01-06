@@ -20,7 +20,9 @@
         <br>
 
         <form id="instrument-form">
-            <label for="instrument-input"><h2>Add an Instrument!</h2></label>
+            <label for="instrument-input">
+                <h2>Add an Instrument!</h2>
+            </label>
             <input type="text" id="instrument-input"><br>
 
             <!-- Button triggers new instruments to be added -->
@@ -28,9 +30,11 @@
         </form>
         <br>
 
-        <!-- Instrument gifs will go here -->
-        <div id="instruments-view"></div>
-        <div id="rating-view"></div>
+        <div class="gif-container">
+            <!-- Instrument gifs will go here -->
+            <div id="instruments-view"></div>
+            <div id="rating-view"></div>
+        </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script type="text/javascript">
@@ -42,10 +46,7 @@
                 function displayInstrument() {
 
                     var instrument = $(this).attr("data-name");
-
                     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + instrument + "&api_key=8VXLEp8Z7wNYMitTIA1I5P4sHXXdsIGd&limit=10";
-
-                    //var state = $(this).attr("data-state");
 
                     $.ajax({
                         url: queryURL,
@@ -53,15 +54,14 @@
                     }).then(function (response) {
 
                         var results = response.data;
-
                         for (var i = 0; i < results.length; i++) {
 
                             // Gif variables and holders
                             var gifDiv = $("<div>");
                             var gifImage = $("<img>");
-                            var gifImage2 = $("<img>");
                             gifImage.attr("src", results[i].images.fixed_height_still.url);
-                            gifImage2.attr("src", results[i].images.fixed_height.url);
+                            gifImage.attr("data-url", results[i].images.fixed_height.url);
+                            gifImage.addClass("instrument-pic");
 
                             gifDiv.prepend(gifImage);
                             $("#instruments-view").prepend(gifDiv);
@@ -73,11 +73,6 @@
 
                             gifDiv.append(p);
 
-                            $("#instruments-view").on("click", function () {
-                                // On the right track but not working
-                                //gifDiv.remove(gifImage);
-                                gifDiv.prepend(gifImage2);
-                            })
                         }
                     });
                 }
@@ -123,6 +118,14 @@
 
                 // Calling the renderButtons function to display the intial buttons
                 renderButtons();
+
+                // Click event to switch between still and animated
+                $(document).on("click", ".instrument-pic", function () {
+                    var src = $(this).attr("src");
+                    var url = $(this).attr("data-url");
+                    $(this).attr("src", url);
+                    $(this).attr("data-url", src);
+                })
             })
 
         </script>

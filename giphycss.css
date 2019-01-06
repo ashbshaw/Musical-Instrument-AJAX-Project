@@ -33,3 +33,18 @@ h2 {
     border-radius: 12px;
 }
 
+.gif-container {
+    width: 1500px;
+}
+
+#instruments-view, #rating-view {
+    display: flex;
+    justify-content: flex-start;  
+    flex-wrap: wrap;
+}
+
+.instrument-pic {
+    padding: 5px;
+}
+
+
